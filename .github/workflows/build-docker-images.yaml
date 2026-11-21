@@ -39,7 +39,7 @@ concurrency:
 jobs:
   build:
     name: Build
-    uses: mserajnik/docker-deploy-workflows/.github/workflows/build.yaml@v1
+    uses: valnaut/docker-deploy-workflows/.github/workflows/build.yaml@dev
     permissions:
       contents: read
       packages: write
