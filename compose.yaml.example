@@ -2,7 +2,7 @@
 
 services:
   database:
-    image: ghcr.io/mserajnik/tortoise-database:base
+    image: ghcr.io/valnaut/tortoise-database:modules-custom
     restart: unless-stopped
     stop_grace_period: 2m # Gives a running import or update time to finish when Docker stops the container.
     healthcheck:
@@ -31,7 +31,7 @@ services:
       - TORTOISE_PROCESS_CUSTOM_SQL=1 # Runs your custom SQL files every time the service starts.
 
   realmd:
-    image: ghcr.io/mserajnik/tortoise-server:base
+    image: ghcr.io/valnaut/tortoise-server:modules-custom
     command: realmd
     ulimits:
       nofile: 1024 # Also caps the number of concurrent players.
@@ -61,7 +61,7 @@ services:
   mangosd:
     # The `&mangosd-image` anchor is used by the `check-deploy-version`,
     # `extract-client-data`, and `verify-client-data` services and has to stay.
-    image: &mangosd-image ghcr.io/mserajnik/tortoise-server:base
+    image: &mangosd-image ghcr.io/valnaut/tortoise-server:modules-custom
     command: mangosd
     tty: true
     stdin_open: true
@@ -83,6 +83,12 @@ services:
       # - 7878:7878 # For SOAP, uncomment this line and set `SOAP.Enabled = 1` in `config/mangosd.conf`.
     volumes:
       - ./config/mangosd.conf:/opt/tortoise/config/mangosd.conf:ro
+      # Copy each module's `.conf.example` to `.conf` before the first start.
+      - ./config/modules-custom/aiplayerbot.conf:/opt/tortoise/config/aiplayerbot.conf:ro
+      - ./config/modules-custom/mod-twow-camps.conf:/opt/tortoise/config/modules/mod-twow-camps.conf:ro
+      - ./config/modules-custom/mod_ahbot.conf:/opt/tortoise/config/modules/mod_ahbot.conf:ro
+      - ./config/modules-custom/tortoise_bots.conf:/opt/tortoise/config/modules/tortoise_bots.conf:ro
+      - ./config/modules-custom/tw-mod-aoe-loot.conf:/opt/tortoise/config/modules/tw-mod-aoe-loot.conf:ro
       - ./storage/mangosd/extracted-data:/opt/tortoise/storage/data:ro
       - ./storage/mangosd/logs:/opt/tortoise/storage/logs
       - ./storage/mangosd/honor:/opt/tortoise/storage/honor
@@ -137,7 +143,7 @@ services:
   #     - DB_SERVER=database
   #     - DB_USER=root
   #     - DB_PASS=password # Must match `MARIADB_ROOT_PASSWORD` of the `database` service.
-  #     - DB_DUMP_INCLUDE=tw_char,tw_logon,maintenance
+  #     - DB_DUMP_INCLUDE=tw_char,tw_logon,tw_world,maintenance
   #     - DB_DUMP_TARGET=/backup
   #     - DB_DUMP_COMPRESSION=gzip
   #     - DB_DUMP_CRON=CRON_TZ=Etc/UTC 0 4 * * * # Every day at 04:00. `CRON_TZ` is the schedule's time zone.
