@@ -17,6 +17,4 @@ jobs:
       shell-exclude: |
         docker/database/docker-entrypoint.sh
       compose-files: |
-        compose-modules-bots.yaml.example
-        compose-modules.yaml.example
         compose.yaml.example
