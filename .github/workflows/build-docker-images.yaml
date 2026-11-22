@@ -6,7 +6,7 @@ name: Build and push Docker images
 on:
   push:
     branches:
-      - dev
+      - master
     paths:
       - .dockerignore
       - .github/deploy.yaml
@@ -14,7 +14,7 @@ on:
       - docker/**
   pull_request:
     branches:
-      - dev
+      - master
     paths:
       - .dockerignore
       - .github/deploy.yaml
@@ -39,7 +39,7 @@ concurrency:
 jobs:
   build:
     name: Build
-    uses: valnaut/docker-deploy-workflows/.github/workflows/build.yaml@dev
+    uses: valnaut/docker-deploy-workflows/.github/workflows/build.yaml@master
     permissions:
       contents: read
       packages: write
