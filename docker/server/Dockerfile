@@ -150,6 +150,10 @@ RUN \
         module_directory="${module%%=*}"; \
         module_path="/build/core/modules/$module_directory"; \
         installed_sql="/opt/tortoise/modules/$module_directory/data/sql"; \
+		if [ -d "$module_path/data/sql" ] && [ ! -d "$installed_sql" ]; then \
+          mkdir -p "$installed_sql" || exit 1; \
+          cp -r "$module_path/data/sql/." "$installed_sql/" || exit 1; \
+        fi; \
         : >/build/module-sql-expected; \
         : >/build/module-sql-installed; \
         find -L "$module_path" -xdev -type f -iname '*.sql' \
