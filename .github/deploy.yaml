@@ -43,7 +43,7 @@ variants:
       module-configs: aiplayerbot.conf,modules/mod-twow-camps.conf,modules/mod_ahbot.conf,modules/tortoise_bots.conf,modules/tw-mod-aoe-loot.conf
       module-sql-modules: TortoiseBots,mod-twow-camps
       module-build-packages: libboost-dev libboost-filesystem-dev
-      server-licenses: AGPL-3.0-only AND AGPL-3.0-or-later AND GPL-2.0-or-later
+      server-licenses: AGPL-3.0-only AND AGPL-3.0-or-later AND GPL-2.0-or-later AND MIT
 
 vars:
   modules: ""
@@ -62,6 +62,20 @@ diff:
       pin: 063eb10da092170beea08d2c629b6eb79d28cceb
   # A change upstream that breaks a patch already fails the build.
   checks:
+    # - A new `find_package(...)` in `CMakeLists.txt` can add a package the
+    #   server image has to install.
+    # - `sql/base/tw_world_migrations.sql` contains only migration bookkeeping,
+    #   which the migration edit scan excludes.
+    # - `extract_world_schema` in `db-functions.sh` depends on the format of
+    #   `sql/create_databases.sql`.
+    # - The configuration templates are the sources of the `*.conf.example`
+    #   files under `config/`.
+    # - The client data extraction runs with the options of
+    #   `tools/BuildEverything.bat`, which
+    #   `docker/server/docker-cmd-extract-client-data.sh` links. Update the
+    #   commit in that link along with the pin.
+    # - The server image parses its DBC hash manifest from
+    #   `tools/dbc_verification/dbc_verifier.py`.
     - source: core
       files: [CMakeLists.txt, sql/base/tw_world_migrations.sql, sql/create_databases.sql, src/mangosd/mangosd.conf.dist.in, src/realmd/realmd.conf.dist.in, tools/BuildEverything.bat, tools/dbc_verification/dbc_verifier.py]
     # The module configuration templates are the sources of the
@@ -80,11 +94,16 @@ migration-edits:
     world:
       remedy: recreate
       sources:
+        # Only the world database gets base dumps. The server applies the
+        # migrations under `<folder>/cn/` only with the `NiHao` option turned
+        # on, which this deployment never sets.
         core:
           migrations: [sql/database_updates/*.sql, sql/database_updates/world/*.sql]
           base: [sql/base/tw_world_*.sql]
           exclude: [sql/base/tw_world_migrations.sql, sql/database_updates/*/cn/*.sql]
           claim: [sql/base/**/*.sql, sql/database_updates/**/*.sql]
+        # The module has migrations only, which create its tables, so a
+        # database created before one of them existed still gets all of them.
         tortoisebots:
           migrations: [data/sql/world/*.sql]
           claim: [data/sql/**/*.sql]
