@@ -13,7 +13,9 @@ ConfVersion=2020072501
 AiPlayerbot.Enabled = 1
 
 # Enable Observability telemetry UDP emitter for the dashboard (default 1)
-AiPlayerbot.Observability = 1
+# This is turned off by default in tortoise-deploy because it does not provide
+# the observability dashboard.
+AiPlayerbot.Observability = 0
 # Auto-start the dashboard binary when mangosd starts (needs Observability = 1; stops with mangosd).
 AiPlayerbot.ObservabilityAutoStart = 1
 # Optional path to the dashboard binary; empty = look next to mangosd (tortoise-observability-windows-amd64.exe / -linux-amd64).
@@ -4154,7 +4156,10 @@ AiPlayerbot.LogRetentionDays = 3
 # At server start, look up the newest TortoiseBots and TortoiseBotsManager releases on GitHub once, in
 # the background (needs curl, standard on Linux and Windows 10+). Players then see the newest versions at
 # login and in the addon. Offline or failed lookups change nothing. 0 = never connect.
-AiPlayerbot.UpdateCheck = 1
+# This is turned off by default in tortoise-deploy because its update process
+# is the only way to get a newer module release. Turning it on has no effect,
+# because the image does not contain curl, which the check needs.
+AiPlayerbot.UpdateCheck = 0
 
 # Filters certain actions from showing up in 'nc +debug' and 'nc +debug action'
 # AiPlayerbot.DebugFilter = add gathering loot,check values,emote,check mount state,jump
