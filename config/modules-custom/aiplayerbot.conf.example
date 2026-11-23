@@ -13,9 +13,7 @@ ConfVersion=2020072501
 AiPlayerbot.Enabled = 1
 
 # Enable Observability telemetry UDP emitter for the dashboard (default 1)
-# This is turned off by default in tortoise-deploy because it does not provide
-# the observability dashboard.
-AiPlayerbot.Observability = 0
+AiPlayerbot.Observability = 1
 # Auto-start the dashboard binary when mangosd starts (needs Observability = 1; stops with mangosd).
 AiPlayerbot.ObservabilityAutoStart = 1
 # Optional path to the dashboard binary; empty = look next to mangosd (tortoise-observability-windows-amd64.exe / -linux-amd64).
@@ -3086,12 +3084,15 @@ AiPlayerbot.PoolBotTradeMode = 0
 # Default: "RPLL_H_,DBMv4"
 AiPlayerbot.TradeActionExcludedPrefixes = "RPLL_H_,DBMv4"
 
-# Generate and persist the full TravelNode/navmesh cache at AI startup.
-# This can load every map and perform a large database rebuild. Leave disabled
-# unless a core path-filter implementation is available; the pinned Tortoise
-# core currently disables this option and uses direct movement instead.
-# Default: 0 (disabled)
-# AiPlayerbot.GenerateTravelNodes = 0
+# On a fresh install the travel graph (ai_playerbot_travelnode/_link/_path)
+# is empty. When this is 1, the whole graph is generated once, synchronously,
+# during server startup, before bots log in and the world opens: node seeding
+# from core data, walk-link pathfinding, pruning, costs, taxi links, then one
+# full save in a transaction. Later boots just load the tables. First boot
+# takes minutes; progress logs every few %. 0 skips generation entirely (bots
+# use persisted nodes or direct movement). No incremental/tick/background work.
+# Default: 1 (generate once while empty)
+AiPlayerbot.GenerateTravelNodes = 1
 
 # Generate and persist fish-location points when no FISH_LOCATION rows exist.
 # This scans populated grids and writes a potentially large cache to World.
@@ -4153,10 +4154,7 @@ AiPlayerbot.LogRetentionDays = 3
 # At server start, look up the newest TortoiseBots and TortoiseBotsManager releases on GitHub once, in
 # the background (needs curl, standard on Linux and Windows 10+). Players then see the newest versions at
 # login and in the addon. Offline or failed lookups change nothing. 0 = never connect.
-# This is turned off by default in tortoise-deploy because its update process
-# is the only way to get a newer module release. Turning it on has no effect,
-# because the image does not contain curl, which the check needs.
-AiPlayerbot.UpdateCheck = 0
+AiPlayerbot.UpdateCheck = 1
 
 # Filters certain actions from showing up in 'nc +debug' and 'nc +debug action'
 # AiPlayerbot.DebugFilter = add gathering loot,check values,emote,check mount state,jump
