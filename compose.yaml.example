@@ -143,7 +143,7 @@ services:
   #     - DB_SERVER=database
   #     - DB_USER=root
   #     - DB_PASS=password # Must match `MARIADB_ROOT_PASSWORD` of the `database` service.
-  #     - DB_DUMP_INCLUDE=tw_char,tw_logon,tw_world,maintenance
+  #     - DB_DUMP_INCLUDE=tw_char,tw_logon,maintenance
   #     - DB_DUMP_TARGET=/backup
   #     - DB_DUMP_COMPRESSION=gzip
   #     - DB_DUMP_CRON=CRON_TZ=Etc/UTC 0 4 * * * # Every day at 04:00. `CRON_TZ` is the schedule's time zone.
